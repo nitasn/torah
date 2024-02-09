@@ -36,7 +36,7 @@ void writeTorahBlockFile() {
 
   // write output file
 
-  std::cout << "writing torah.block (" << result.length() << " bytes)" << std::endl;
+  std::cout << "writing torah.block (" << result.size() << " bytes)" << std::endl;
 
   std::ofstream outfile("torah.block");
 
