@@ -1,13 +1,17 @@
-#include "boyer-moore-els.hpp"
-
-#include <stdbool.h> // for bool
-#include <unistd.h> // for ssize_t
-
 /**
  * this is wikipedia's impl of boyer-moore substring search algorithm
  * [https://en.wikipedia.org/wiki/Boyer–Moore_string-search_algorithm#C_implementation]
  * adjusted for ELS (ELS = Equidistant Letter Sequence, a.k.a "the bible code")
  */
+
+#include "boyer-moore-els.hpp"
+
+#include <stdbool.h> // for bool
+#include <unistd.h> // for ssize_t
+
+///////////////////////////////////////////////////////////////
+///               M O D U L E   P R I V A T E               ///
+///////////////////////////////////////////////////////////////
 
 #define max(a, b) ((a < b) ? b : a)
 
@@ -60,35 +64,100 @@ void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-uint8_t *boyer_moore_els(
+uint8_t *boyer_moore_els_impl(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
-    size_t els_step // a.k.a the "diloog"
+    ptrdiff_t delta1[], ptrdiff_t delta2[],
+    size_t step // a.k.a the "diloog"
 ) {
-  ptrdiff_t delta1[ALPHABET_LEN];
-  ptrdiff_t delta2[len_pattern];
-  make_delta1(delta1, pattern, len_pattern);
-  make_delta2(delta2, pattern, len_pattern);
 
-  if (len_pattern == 0) {
-    return string;
-  }
-
-  for (size_t mod = 0; mod < els_step; ++mod) {
-    size_t i = mod + els_step * (len_pattern - 1);
+  for (size_t mod = 0; mod < step; ++mod) {
+    size_t i = mod + step * (len_pattern - 1);
     while (i < len_string) {
       ptrdiff_t j = len_pattern - 1;
       while (j >= 0 && (string[i] == pattern[j])) {
         j -= 1;
-        i -= els_step;
+        i -= step;
       }
       if (j < 0) {
-        return &string[i + els_step];
+        return &string[i + step];
       }
 
-      i += els_step * max(delta1[string[i]], delta2[j]);
+      i += step * max(delta1[string[i]], delta2[j]);
     }
   }
 
   return NULL;
 }
+
+///////////////////////////////////////////////////////////////
+///                M O D U L E   E X P O R T                ///
+///////////////////////////////////////////////////////////////
+
+#include <string.h> // for "memchr"
+
+uint8_t *boyer_moore_els(
+    uint8_t *string, size_t len_string, 
+    uint8_t *pattern, size_t len_pattern, 
+    size_t *ptr_step
+) {
+
+  if (len_pattern == 0) {
+    return string;
+  }
+
+  if (len_pattern == 1) {
+    return (uint8_t *) memchr(string, *pattern, len_string);
+  }
+
+  ptrdiff_t delta1[ALPHABET_LEN];
+  make_delta1(delta1, pattern, len_pattern);
+  
+  ptrdiff_t delta2[len_pattern];
+  make_delta2(delta2, pattern, len_pattern);
+
+  if (*ptr_step) {
+    return boyer_moore_els_impl(string, len_string, pattern, len_pattern, delta1, delta2, *ptr_step);
+  }
+
+  const size_t max_step = (len_string - 1) / (len_pattern - 1); // see comment below
+
+  for (size_t step = 1; step <= max_step; ++step) {
+    uint8_t *match = boyer_moore_els_impl(string, len_string, pattern, len_pattern, delta1, delta2, step);
+    if (match) {
+      *ptr_step = step;
+      return match;
+    }
+  }
+
+  return NULL;
+}
+
+/*
+the largest possible step size
+occurs when the pattern spans the entire string:
+
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15   (the big string)
+x              x              x              x    (where pattern fits)
+
+last_string_index = 15
+len_pattern = 4
+step = 5
+
+we want:
+
+last_pattern_index ≤ last_string_index
+
+hence:
+
+5    * 3                 ≤ 15
+step * (len_pattern - 1) ≤ last_string_index
+
+step ≤ last_string_index / (len_pattern - 1)
+
+step ≤ (len_str - 1) / (len_pattern - 1)
+
+---
+note: len_pattern ≥ 2;
+the function starts by verifying it.
+*/
