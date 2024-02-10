@@ -4,5 +4,5 @@
 uint8_t *boyer_moore_els(
   uint8_t *string, size_t stringlen, 
   uint8_t *pat, size_t patlen, 
-  size_t els_step // a.k.a the "diloog"
+  size_t *ptr_step // a.k.a the "diloog"
 );
