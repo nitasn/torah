@@ -5,16 +5,13 @@
 
 #include <iostream>
 
-// #include <iconv.h> // maybe use this?
+#include <iconv.h> // maybe use this?
 
 int main() {
   std::vector<uint8_t> torahBlock = readBinaryFile("torah.block");
 
-  // torahBlock = std::vector<uint8_t>(torahBlock.begin(), torahBlock.begin() + 50);
-
   std::string input;
   std::getline(std::cin, input); // read entire line
-
   input = removeSpacesAndConvertToNumbers(input);
 
   size_t step = 0;

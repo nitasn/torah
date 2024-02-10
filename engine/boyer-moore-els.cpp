@@ -1,7 +1,7 @@
 /**
  * This code is based on wikipedia's implementation of boyer-moore substring search algorithm
- * [https://en.wikipedia.org/wiki/Boyer–Moore_string-search_algorithm#C_implementation]
- * I adjusted it for ELS (Equidistant Letter Sequence) a.k.a "the bible code"
+ * [https://en.wikipedia.org/wiki/Boyer–Moore_string-search_algorithm#C_implementation].
+ * Below it's adjusted for ELS (Equidistant Letter Sequence) a.k.a "the bible code"
  */
 
 #include "boyer-moore-els.hpp"
@@ -15,7 +15,7 @@
 
 #define max(a, b) ((a < b) ? b : a)
 
-#define ALPHABET_LEN (22 + 1) /* todo make it 22 */
+#define ALPHABET_LEN 22
 
 void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
   for (int i = 0; i < ALPHABET_LEN; i++) {
