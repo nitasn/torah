@@ -1,7 +1,7 @@
 /**
- * this is wikipedia's impl of boyer-moore substring search algorithm
+ * This code is based on wikipedia's implementation of boyer-moore substring search algorithm
  * [https://en.wikipedia.org/wiki/Boyer–Moore_string-search_algorithm#C_implementation]
- * adjusted for ELS (ELS = Equidistant Letter Sequence, a.k.a "the bible code")
+ * I adjusted it for ELS (Equidistant Letter Sequence) a.k.a "the bible code"
  */
 
 #include "boyer-moore-els.hpp"
@@ -97,13 +97,27 @@ uint8_t *boyer_moore_els_impl(
 #include <string.h> // for "memchr"
 
 /**
-  TODO: why don't we return the first match? (in non trivial cases where len_pattern ≤ 1 cases)
-  when we look for אהמ with step 2,
-  it's found at index 14, but there's also a match at index 9
+  Issue:
+  The current implementation returns the first result in the lowest step;
+  That is, a result at a lower index, but with a higher step, is possible.
 
-  49 48 47 46 45 44 43 42 41 40 39 38 37 36 35 34 33 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
-  ב  ר  א  ש  י  ת  ב  ר  א  א  ל  ה  י  ם  א  ת  ה  ש  מ  י  ם  ו  א  ת  ה  א  ר  ץ  ו  ה  א  ר  ץ  ה  י  ת  ה  ת  ה  ו  ו  ב  ה  ו  ו  ח  ש  ך  ע  ל
+  The current implementation is: 
+    foreach step (low to high) -> foreach mod (low to high) -> search match index (low to high).
+  Hence,
+  The code may return a result at some index, 
+  even though a result at a lower index is possible (with a higher mod or a higher step).
+
+  For instance:
+  In the text below, if we look for 'א ה מ' with step 2,
+  it's found at index 14 (which has mod 0), but there's also a match at index 9 (which has mode 1)
+
+  27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
+  ב  ר  א  ש  י  ת  ב  ר  א  א  ל  ה  י  מ  א  ת  ה  ש  מ  י  מ  ו  א  ת  ה  א  ר  ץ
 */
+
+/**
+ * TODO: impl negative steps (could be done trivially by re-searching for the reverse of the pattern)
+ */
 
 uint8_t *boyer_moore_els(
     uint8_t *string, size_t len_string, 
