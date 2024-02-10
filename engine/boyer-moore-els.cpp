@@ -96,6 +96,8 @@ uint8_t *boyer_moore_els_impl(
 
 #include <string.h> // for "memchr"
 
+// TODO: do we find the last index of match?? (in non trivial len_pattern ≤ 1 cases)
+
 uint8_t *boyer_moore_els(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
