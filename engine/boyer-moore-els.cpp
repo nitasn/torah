@@ -96,7 +96,14 @@ uint8_t *boyer_moore_els_impl(
 
 #include <string.h> // for "memchr"
 
-// TODO: do we find the last index of match?? (in non trivial len_pattern ≤ 1 cases)
+/**
+  TODO: why don't we return the first match? (in non trivial cases where len_pattern ≤ 1 cases)
+  when we look for אהמ with step 2,
+  it's found at index 14, but there's also a match at index 9
+
+  49 48 47 46 45 44 43 42 41 40 39 38 37 36 35 34 33 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
+  ב  ר  א  ש  י  ת  ב  ר  א  א  ל  ה  י  ם  א  ת  ה  ש  מ  י  ם  ו  א  ת  ה  א  ר  ץ  ו  ה  א  ר  ץ  ה  י  ת  ה  ת  ה  ו  ו  ב  ה  ו  ו  ח  ש  ך  ע  ל
+*/
 
 uint8_t *boyer_moore_els(
     uint8_t *string, size_t len_string, 
