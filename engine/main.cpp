@@ -55,7 +55,7 @@ void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-uint8_t *boyer_moore(uint8_t *string, size_t stringlen, uint8_t *pat, size_t patlen) {
+uint8_t *boyer_moore(uint8_t *string, size_t stringlen, uint8_t *pat, size_t patlen, size_t diloog) {
   ptrdiff_t delta1[ALPHABET_LEN];
   ptrdiff_t delta2[patlen];
   make_delta1(delta1, pat, patlen);
@@ -65,19 +65,22 @@ uint8_t *boyer_moore(uint8_t *string, size_t stringlen, uint8_t *pat, size_t pat
     return string;
   }
 
-  size_t i = patlen - 1;
-  while (i < stringlen) {
-    ptrdiff_t j = patlen - 1;
-    while (j >= 0 && (string[i] == pat[j])) {
-      --i, --j;
-    }
-    if (j < 0) {
-      return &string[i + 1];
-    }
+  for (size_t mod = 0; mod < diloog; ++mod) {
+    size_t i = patlen - 1;
+    while (mod + diloog * i < stringlen) {
+      ptrdiff_t j = patlen - 1;
+      while (j >= 0 && (string[mod + diloog * i] == pat[j])) {
+        --i, --j;
+      }
+      if (j < 0) {
+        return &string[i + 1];
+      }
 
-    ptrdiff_t shift = max(delta1[string[i]], delta2[j]);
-    i += shift;
+      ptrdiff_t shift = max(delta1[string[mod + diloog * i]], delta2[j]);
+      i += shift;
+    }
   }
+
   return NULL;
 }
 
@@ -99,8 +102,10 @@ int main() {
   input = removeSpacesAndConvertToNumbers(input);
 
   uint8_t *result = boyer_moore(
-      torahBlock.data(), torahBlock.size(),
-      (uint8_t *)input.data(), input.size());
+    torahBlock.data(), torahBlock.size(),
+    (uint8_t *)input.data(), input.size(),
+    2
+  );
 
   if (!result) {
     std::cerr << "no result" << '\n';
