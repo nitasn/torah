@@ -1,95 +1,11 @@
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "boyer-moore-els.hpp"
 
-#define max(a, b) ((a < b) ? b : a)
-
-#define ALPHABET_LEN (22 + 1)
-
-void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
-  for (int i = 0; i < ALPHABET_LEN; i++) {
-    delta1[i] = patlen;
-  }
-  for (int i = 0; i < patlen; i++) {
-    delta1[pat[i]] = patlen - 1 - i;
-  }
-}
-
-bool is_prefix(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
-  int suffixlen = wordlen - pos;
-
-  for (int i = 0; i < suffixlen; i++) {
-    if (word[i] != word[pos + i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-size_t suffix_length(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
-  size_t i;
-
-  for (i = 0; (word[pos - i] == word[wordlen - 1 - i]) && (i <= pos); i++)
-    ;
-  return i;
-}
-
-void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
-  ssize_t p;
-  size_t last_prefix_index = 1;
-
-  for (p = patlen - 1; p >= 0; p--) {
-    if (is_prefix(pat, patlen, p + 1)) {
-      last_prefix_index = p + 1;
-    }
-    delta2[p] = last_prefix_index + (patlen - 1 - p);
-  }
-
-  for (p = 0; p < patlen - 1; p++) {
-    size_t slen = suffix_length(pat, patlen, p);
-    if (pat[p - slen] != pat[patlen - 1 - slen]) {
-      delta2[patlen - 1 - slen] = patlen - 1 - p + slen;
-    }
-  }
-}
-
-uint8_t *boyer_moore(uint8_t *string, size_t stringlen, uint8_t *pat, size_t patlen, size_t diloog) {
-  ptrdiff_t delta1[ALPHABET_LEN];
-  ptrdiff_t delta2[patlen];
-  make_delta1(delta1, pat, patlen);
-  make_delta2(delta2, pat, patlen);
-
-  if (patlen == 0) {
-    return string;
-  }
-
-  for (size_t mod = 0; mod < diloog; ++mod) {
-    size_t i = patlen - 1;
-    while (mod + diloog * i < stringlen) {
-      ptrdiff_t j = patlen - 1;
-      while (j >= 0 && (string[mod + diloog * i] == pat[j])) {
-        --i, --j;
-      }
-      if (j < 0) {
-        return &string[i + 1];
-      }
-
-      ptrdiff_t shift = max(delta1[string[mod + diloog * i]], delta2[j]);
-      i += shift;
-    }
-  }
-
-  return NULL;
-}
-
-#include "read-file.hpp"
-#include "iso-8859-8.hpp"
-#include "util-functions.hpp"
+#include "read-file.hpp" // for "readBinaryFile"
+#include "util-functions.hpp" // "removeSpacesAndConvertToNumbers"
 
 #include <iostream>
-#include <iconv.h>
+
+// #include <iconv.h> // maybe use this?
 
 int main() {
   std::vector<uint8_t> torahBlock = readBinaryFile("torah.block");
@@ -101,7 +17,7 @@ int main() {
 
   input = removeSpacesAndConvertToNumbers(input);
 
-  uint8_t *result = boyer_moore(
+  uint8_t *result = boyer_moore_els(
     torahBlock.data(), torahBlock.size(),
     (uint8_t *)input.data(), input.size(),
     2
@@ -112,5 +28,12 @@ int main() {
     exit(1);
   }
 
-  std::cout << "found it!" << '\n';
+  std::cout << "found it at index " << (size_t)(result) - (size_t)(torahBlock.data()) << '\n';
 }
+
+/*
+
+49 48 47 46 45 44 43 42 41 40 39 38 37 36 35 34 33 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9  8  7  6  5  4  3  2  1  0
+ב  ר  א  ש  י  ת  ב  ר  א  א  ל  ה  י  ם  א  ת  ה  ש  מ  י  ם  ו  א  ת  ה  א  ר  ץ  ו  ה  א  ר  ץ  ה  י  ת  ה  ת  ה  ו  ו  ב  ה  ו  ו  ח  ש  ך  ע  ל
+
+*/
