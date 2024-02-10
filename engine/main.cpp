@@ -10,17 +10,19 @@
 int main() {
   std::vector<uint8_t> torahBlock = readBinaryFile("torah.block");
 
-  torahBlock = std::vector<uint8_t>(torahBlock.begin(), torahBlock.begin() + 50);
+  // torahBlock = std::vector<uint8_t>(torahBlock.begin(), torahBlock.begin() + 50);
 
   std::string input;
-  std::cin >> input;
+  std::getline(std::cin, input); // read entire line
 
   input = removeSpacesAndConvertToNumbers(input);
+
+  size_t step = 0;
 
   uint8_t *result = boyer_moore_els(
     torahBlock.data(), torahBlock.size(),
     (uint8_t *)input.data(), input.size(),
-    2
+    &step
   );
 
   if (!result) {
@@ -28,5 +30,7 @@ int main() {
     exit(1);
   }
 
-  std::cout << "found it at index " << (size_t)(result) - (size_t)(torahBlock.data()) << '\n';
+  std::cout << "found" << '\n';
+  std::cout << "at index " << (size_t)(result) - (size_t)(torahBlock.data()) << '\n';
+  std::cout << "at step " << step << '\n';
 }
