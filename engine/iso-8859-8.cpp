@@ -60,6 +60,6 @@ char number_to_isoHebrew(char number) {
     case 19: return  '\xE0' + 24;  //  ר
     case 20: return  '\xE0' + 25;  //  ש
     case 21: return  '\xE0' + 26;  //  ת
-    default: throw std::invalid_argument("number out of [1, 26] range");
+    default: throw std::invalid_argument("number out of range [0, 21]");
   }
 }
