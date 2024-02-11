@@ -116,6 +116,8 @@ uint8_t *boyer_moore_els_impl(
 */
 
 /**
+ * TODO: try to preserve cache by checking all mods around before increasing the step?
+ * 
  * TODO: impl negative steps (could be done trivially by re-searching for the reverse of the pattern)
  * 
  * TODO: return all results?
