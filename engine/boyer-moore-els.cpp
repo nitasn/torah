@@ -117,6 +117,8 @@ uint8_t *boyer_moore_els_impl(
 
 /**
  * TODO: impl negative steps (could be done trivially by re-searching for the reverse of the pattern)
+ * 
+ * TODO: return all results?
  */
 
 uint8_t *boyer_moore_els(
