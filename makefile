@@ -6,8 +6,12 @@ DEP_DIR := $(OUT_DIR)/.d
 
 EXECUTABLE := $(OUT_DIR)/main
 
+_gen_deps :=  -MMD -MP -I./$(SRC_DIR)
+
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -O3 -MMD -MP -I./$(SRC_DIR)
+CXXFLAGS := -std=c++20 -Wall -O3 $(_gen_deps)
+
+EXTRA_LINKER_FLAGS := -liconv  # TODO should it be just LINKER_FLAGS and COMPILE_FLAGS
 
 
 #################################################################
@@ -54,7 +58,7 @@ DEP_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(DEP_DIR)/%.d,$(SRC_FILES))
 $(EXECUTABLE): $(OBJ_FILES)
 	@mkdir -p $(OUT_DIR)
 	@echo "linking $@"
-	@$(CXX) $(CXXFLAGS) -o $@ $^
+	@$(CXX) $(CXXFLAGS) $(EXTRA_LINKER_FLAGS) -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@) $(dir $(DEP_DIR)/$*.d)
