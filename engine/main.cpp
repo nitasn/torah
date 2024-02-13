@@ -34,7 +34,5 @@ int main() {
     else {
       std::cout << "could not find " << original_input << '\n';
     }
-
-    return 0;
   }
 }
