@@ -23,9 +23,9 @@ PHONY_TARGETS := executable run clean help
 .PHONY: $(PHONY_TARGETS)
 
 
-executable: $(EXECUTABLE)
+args := # optional args passed from command line to executable
 
-args := # to be overriden from command line (e.g. make run args="arg1 arg2 arg3")
+executable: $(EXECUTABLE)
 
 run: executable
 	@echo "running $(EXECUTABLE) $(args)"
@@ -37,7 +37,8 @@ clean:
 help:
 	@echo "Available targets:"
 	@echo "  make       - build the code"
-	@echo "  make run   - build & run the code"
+	@echo "  make run   - build & run the code;"
+	@echo "               can pass args, e.g. make run args='arg1 arg2 arg3'"
 	@echo "  make clean - delete 'build' folder"
 	@echo "  make help  - show this menu"
 
