@@ -6,10 +6,10 @@ DEP_DIR := $(OUT_DIR)/.d
 
 EXECUTABLE := $(OUT_DIR)/main
 
-__generates_depenencies :=  -MMD -MP -I./$(SRC_DIR)
+__generate_depenencies :=  -MMD -MP -I./$(SRC_DIR)
 
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -O3 $(__generates_depenencies)
+CXXFLAGS := -std=c++20 -Wall -Wextra -O3 $(__generate_depenencies)
 LINKER_FLAGS := -liconv
 
 
@@ -18,16 +18,16 @@ LINKER_FLAGS := -liconv
 #################################################################
 
 
-PHONY_TARGETS := all run clean help
+PHONY_TARGETS := executable run clean help
 
 .PHONY: $(PHONY_TARGETS)
 
 
-all: $(EXECUTABLE)
+executable: $(EXECUTABLE)
 
 args := # to be overriden from command line (e.g. make run args="arg1 arg2 arg3")
 
-run: all
+run: executable
 	@echo "running $(EXECUTABLE) $(args)"
 	@$(EXECUTABLE) $(args)
 
@@ -36,10 +36,10 @@ clean:
 
 help:
 	@echo "Available targets:"
-	@echo "  all   - Build the project."
-	@echo "  run   - Run the main executable."
-	@echo "  clean - Remove all build files."
-	@echo "  help  - Show this help message."
+	@echo "  make       - build the code"
+	@echo "  make run   - build & run the code"
+	@echo "  make clean - delete 'build' folder"
+	@echo "  make help  - show this menu"
 
 
 #################################################################
