@@ -64,7 +64,7 @@ void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-uint8_t *boyer_moore_els_impl(
+uint8_t *boyer_moore_els_impl__faster(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
     ptrdiff_t delta1[], ptrdiff_t delta2[],
@@ -90,9 +90,9 @@ uint8_t *boyer_moore_els_impl(
   return NULL;
 }
 
-/*
+
 // this attempts to traverse the big string in a slitghly more monotonous manner
-uint8_t *boyer_moore_els_impl__slower(
+uint8_t *boyer_moore_els_impl(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
     ptrdiff_t delta1[], ptrdiff_t delta2[],
@@ -137,7 +137,7 @@ uint8_t *boyer_moore_els_impl__slower(
 
   return NULL;
 }
-*/
+
 
 ///////////////////////////////////////////////////////////////
 ///                M O D U L E   E X P O R T                ///
