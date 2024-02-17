@@ -24,7 +24,7 @@ int main() {
     );
 
     if (result) {
-      auto index = (size_t)(result) - (size_t)(torah_block);
+      size_t index = (ptrdiff_t) result - (ptrdiff_t) torah_block;
       std::cout << "found " << original_input << '\n';
       std::cout << "at index " << index << '\n';
       std::cout << "at step " << step << '\n';
