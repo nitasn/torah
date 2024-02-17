@@ -1,5 +1,7 @@
 #pragma once
 
-char isoHebrew_to_number(char letter);
+#include <cinttypes>
 
-char number_to_isoHebrew(char letter);
+uint8_t isoHebrew_to_number(char letter);
+
+char number_to_isoHebrew(uint8_t number);

@@ -1,24 +1,31 @@
 #include "util-functions.hpp"
 #include "iso-8859-8.hpp"
 
-#include <string>
-
-std::string removeSpacesAndConvertToNumbers(const std::string &input) {
-  std::string result;
+std::vector<uint8_t> removeSpacesAndConvertToNumbers(const std::string &string_iso_8859_8) {
+  std::vector<uint8_t> result;
 
   static const auto is_not_space = [](char c) { return !isspace(c); };
 
-  std::copy_if(input.begin(), input.end(), std::back_inserter(result), is_not_space);
+  std::copy_if(string_iso_8859_8.begin(), string_iso_8859_8.end(), std::back_inserter(result), is_not_space);
   std::transform(result.begin(), result.end(), result.begin(), isoHebrew_to_number);
 
   return result;
 }
 
-
 #include <iostream>
+
+static void _panic(size_t i, unsigned char c) {
+  std::cerr 
+    << "utf8_to_iso_8859_8 failed: invalid character " << (unsigned)c << " "
+    << "at index " << i 
+    << std::endl;
+
+  exit(2); // todo have a way to return error as value
+}
 
 std::string utf8ToIso8859_8(const std::string &utf8) {
   std::string result;
+  result.reserve(utf8.length());
 
   for (size_t i = 0; i < utf8.size(); ++i) {
     unsigned char c = utf8[i];
@@ -33,16 +40,10 @@ std::string utf8ToIso8859_8(const std::string &utf8) {
       if (iso8859_8Char >= 0xA0 && iso8859_8Char <= 0xFA) { // valid ISO-8859-8 range for Hebrew
         result += static_cast<char>(iso8859_8Char);
       }
-      else {
-        std::cerr << "Found invalid Hebrew character in UTF-8 string" << std::endl;
-        exit(2);
-      }
+      else _panic(i, c); 
       i++; // skip the next byte, as it's part of the current character
     }
-    else {
-      std::cerr << "Unsupported character encountered" << std::endl;
-      exit(2);
-    }
+    else _panic(i, c); 
   }
 
   return result;

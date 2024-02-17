@@ -1,9 +1,8 @@
 #include "iso-8859-8.hpp"
 
-#include <stdexcept>
+#include <iostream> // for std::cerr
 
-
-char isoHebrew_to_number(char letter) {
+uint8_t isoHebrew_to_number(char letter) {
   switch (letter - '\xE0') {
     case 0 : return   0 ;  //  א
     case 1 : return   1 ;  //  ב
@@ -32,11 +31,14 @@ char isoHebrew_to_number(char letter) {
     case 24: return   19;  //  ר
     case 25: return   20;  //  ש
     case 26: return   21;  //  ת
-    default: throw std::invalid_argument("non iso-8859-8 hebrew letter");
+    
+    default: 
+      std::cerr << "isoHebrew_to_number failed: non iso-8859-8 hebrew letter" << '\n';
+      exit(3);
   }
 }
 
-char number_to_isoHebrew(char number) {
+char number_to_isoHebrew(uint8_t number) {
   switch (number) {
     case 0 : return  '\xE0' + 0 ;  //  א
     case 1 : return  '\xE0' + 1 ;  //  ב
@@ -60,6 +62,9 @@ char number_to_isoHebrew(char number) {
     case 19: return  '\xE0' + 24;  //  ר
     case 20: return  '\xE0' + 25;  //  ש
     case 21: return  '\xE0' + 26;  //  ת
-    default: throw std::invalid_argument("number out of range [0, 21]");
+    
+    default: 
+      std::cerr << "number_to_isoHebrew failed: number out of range [0, 21]" << '\n';
+      exit(3);
   }
 }
