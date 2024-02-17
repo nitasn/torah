@@ -21,7 +21,7 @@ void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
   for (int i = 0; i < ALPHABET_LEN; i++) {
     delta1[i] = patlen;
   }
-  for (int i = 0; i < patlen; i++) {
+  for (size_t i = 0; i < patlen; i++) {
     delta1[pat[i]] = patlen - 1 - i;
   }
 }
@@ -71,6 +71,8 @@ uint8_t *boyer_moore_els_impl(
     size_t step // a.k.a the "diloog"
 ) {
 
+  goto version_2;
+
   for (size_t mod = 0; mod < step; ++mod) {
     size_t i = mod + step * (len_pattern - 1);
     while (i < len_string) {
@@ -85,6 +87,46 @@ uint8_t *boyer_moore_els_impl(
 
       i += step * max(delta1[string[i]], delta2[j]);
     }
+  }
+
+  return NULL;
+
+  version_2:
+
+  size_t Is[step], Js[step];
+  Is[0] = step * (len_pattern - 1);
+  Js[0] = len_pattern - 1;
+
+  // "mod" is the modular congruence group
+  for (size_t mod = 1; mod < step; ++mod) {
+    Is[mod] = mod + Is[0];
+    Js[mod] = Js[0];
+  }
+
+  while (true) {
+    size_t num_done = 0;
+
+    for (size_t mod = 0; mod < step; ++mod) {
+      auto& i = Is[mod];
+      auto& j = Js[mod];
+
+      if (i >= len_string) {
+        num_done++;
+      }
+
+      else if (string[i] == pattern[j]) {
+        if (j == 0) return &string[i];
+        i -= step;
+        j -= 1;
+      }
+      
+      else {
+        i += step * max(delta1[string[i]], delta2[j]);
+        j = len_pattern - 1;
+      }
+    }
+
+    if (num_done == step) break;
   }
 
   return NULL;

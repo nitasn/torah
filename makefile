@@ -10,7 +10,8 @@ __generate_depenencies :=  -MMD -MP -I./$(SRC_DIR)
 
 CXX := g++
 CXXFLAGS := -std=c++20 -Wall -Wextra -O3 $(__generate_depenencies)
-LINKER_FLAGS := -liconv
+# CXXFLAGS := -std=c++20 -Wall -g -O0 $(__generate_depenencies)
+LINKER_FLAGS := 
 
 
 #################################################################
