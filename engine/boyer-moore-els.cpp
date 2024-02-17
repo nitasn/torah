@@ -37,7 +37,7 @@ bool is_prefix(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
   return true;
 }
 
-size_t suffix_length(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
+size_t suffix_length(uint8_t *word, size_t wordlen, size_t pos) {
   size_t i;
 
   for (i = 0; (word[pos - i] == word[wordlen - 1 - i]) && (i <= pos); i++)
@@ -46,17 +46,16 @@ size_t suffix_length(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
 }
 
 void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
-  ssize_t p;
   size_t last_prefix_index = 1;
 
-  for (p = patlen - 1; p >= 0; p--) {
+  for (ssize_t p = patlen - 1; p >= 0; p--) {
     if (is_prefix(pat, patlen, p + 1)) {
       last_prefix_index = p + 1;
     }
     delta2[p] = last_prefix_index + (patlen - 1 - p);
   }
 
-  for (p = 0; p < patlen - 1; p++) {
+  for (size_t p = 0; p < patlen - 1; p++) {
     size_t slen = suffix_length(pat, patlen, p);
     if (pat[p - slen] != pat[patlen - 1 - slen]) {
       delta2[patlen - 1 - slen] = patlen - 1 - p + slen;
