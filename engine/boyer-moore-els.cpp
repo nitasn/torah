@@ -90,54 +90,6 @@ uint8_t *boyer_moore_els_impl(
   return NULL;
 }
 
-/*
-// this attempts to traverse the big string in a slitghly more monotonous manner
-uint8_t *boyer_moore_els_impl__slower(
-    uint8_t *string, size_t len_string, 
-    uint8_t *pattern, size_t len_pattern, 
-    ptrdiff_t delta1[], ptrdiff_t delta2[],
-    size_t step // a.k.a the "diloog"
-) {
-
-  size_t Is[step], Js[step];
-  Is[0] = step * (len_pattern - 1);
-  Js[0] = len_pattern - 1;
-
-  // "mod" is the modular congruence group
-  for (size_t mod = 1; mod < step; ++mod) {
-    Is[mod] = mod + Is[0];
-    Js[mod] = Js[0];
-  }
-
-  while (true) {
-    size_t num_done = 0;
-
-    for (size_t mod = 0; mod < step; ++mod) {
-      auto& i = Is[mod];
-      auto& j = Js[mod];
-
-      if (i >= len_string) {
-        num_done++;
-      }
-
-      else if (string[i] == pattern[j]) {
-        if (j == 0) return &string[i];
-        i -= step;
-        j -= 1;
-      }
-      
-      else {
-        i += step * max(delta1[string[i]], delta2[j]);
-        j = len_pattern - 1;
-      }
-    }
-
-    if (num_done == step) break;
-  }
-
-  return NULL;
-}
-*/
 
 ///////////////////////////////////////////////////////////////
 ///                M O D U L E   E X P O R T                ///
@@ -165,8 +117,6 @@ uint8_t *boyer_moore_els_impl__slower(
 */
 
 /**
- * TODO: try to preserve cache by checking all mods around before increasing the step?
- * 
  * TODO: impl negative steps (could be done trivially by re-searching for the reverse of the pattern)
  * 
  * TODO: return all results?
