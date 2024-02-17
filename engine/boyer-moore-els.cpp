@@ -64,14 +64,12 @@ void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-uint8_t *boyer_moore_els_impl(
+uint8_t *boyer_moore_els_impl__faster(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
     ptrdiff_t delta1[], ptrdiff_t delta2[],
     size_t step // a.k.a the "diloog"
 ) {
-
-  goto version_2;
 
   for (size_t mod = 0; mod < step; ++mod) {
     size_t i = mod + step * (len_pattern - 1);
@@ -90,8 +88,15 @@ uint8_t *boyer_moore_els_impl(
   }
 
   return NULL;
+}
 
-  version_2:
+// this attempts to traverse the big string in a slitghly more monotonous manner
+uint8_t *boyer_moore_els_impl(
+    uint8_t *string, size_t len_string, 
+    uint8_t *pattern, size_t len_pattern, 
+    ptrdiff_t delta1[], ptrdiff_t delta2[],
+    size_t step // a.k.a the "diloog"
+) {
 
   size_t Is[step], Js[step];
   Is[0] = step * (len_pattern - 1);
