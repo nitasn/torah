@@ -12,7 +12,8 @@ int main() {
     std::cout << "search: ";
 
     std::string original_input;
-    std::getline(std::cin, original_input);
+    // std::getline(std::cin, original_input);
+    original_input = "שמוליקפוד";
 
     std::string simplified_input = removeSpacesAndConvertToNumbers(utf8_to_iso88598(original_input));
 
@@ -34,5 +35,7 @@ int main() {
     else {
       std::cout << "could not find " << original_input << '\n';
     }
+
+    return 0;
   }
 }
