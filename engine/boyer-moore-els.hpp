@@ -2,11 +2,12 @@
 
 #include <stdint.h> // for uint8_t
 #include <stddef.h> // for size_t
-#include <vector>
+#include <optional>
 
-// struct SearchResult {
-
-// };
+struct SearchResult {
+  size_t index;
+  size_t step;
+};
 
 uint8_t *boyer_moore_els(
   // std::vector<uint8_t>
