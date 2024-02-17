@@ -4,4 +4,4 @@
 
 std::string removeSpacesAndConvertToNumbers(const std::string& input);
 
-std::string utf8_to_iso88598(const std::string& utf8String);
+std::string utf8ToIso8859_8(const std::string& utf8String);

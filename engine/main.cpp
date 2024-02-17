@@ -12,7 +12,7 @@ int main() {
     // std::getline(std::cin, original_input);
     original_input = "שמוליקיפוד";
 
-    std::string simplified_input = removeSpacesAndConvertToNumbers(utf8_to_iso88598(original_input));
+    std::string simplified_input = removeSpacesAndConvertToNumbers(utf8ToIso8859_8(original_input));
 
     if (simplified_input.size() == 0) break;
 
