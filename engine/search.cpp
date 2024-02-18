@@ -4,7 +4,7 @@
 #include "util-functions.hpp" // "removeSpacesAndConvertToNumbers"
 #include "torah_block.h"
 
-bool search(const std::string& pattern_iso_8859_8, SearchResult* pSearchResult) {
+std::optional<SearchResult> search(const std::string& pattern_iso_8859_8) {
   std::vector<uint8_t> simplified_pat = removeSpacesAndConvertToNumbers(pattern_iso_8859_8);
 
   size_t step = 0;
@@ -15,22 +15,28 @@ bool search(const std::string& pattern_iso_8859_8, SearchResult* pSearchResult) 
     &step
   );
 
-  if (!pMatch) return false;
+  if (!pMatch) return std::nullopt;
 
   size_t index = (ptrdiff_t) pMatch - (ptrdiff_t) torah_block;
 
-  *pSearchResult = {
+  return {{
     .index = index,
     .step = step
-  };
-
-  return true;
+  }};
 }
 
-std::optional<SearchResult> search(const std::string& pattern_iso_8859_8) {
-  SearchResult searchResult;
-
-  return search(pattern_iso_8859_8, &searchResult)
-    ? (std::optional<SearchResult>) { searchResult }
-    : std::nullopt;
+/** 
+ * for wasm to export. 
+ * result consists of 41 (least-significant) bits.
+ * bit 0: is found (if it's 0 then the rest is invalid)
+ * bits 1-20: index in string
+ * bits 21-40: step (diloog) size
+ */
+uint64_t search__packed_result(const char *pattern_iso_8859_8) {
+  std::optional<SearchResult> result = search(std::string(pattern_iso_8859_8));
+  if (!result) return 0;
+  const uint64_t twenty_bits = (1 << 20) - 1;
+  const uint64_t step = result->step & twenty_bits;
+  const uint64_t index = result->index & twenty_bits;
+  return (step << 21) | (index << 1) | 0b1;
 }

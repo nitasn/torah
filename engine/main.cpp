@@ -8,8 +8,8 @@ int main() {
     std::cout << "search: ";
 
     std::string patternUTF8;
-    std::getline(std::cin, patternUTF8);
-    // patternUTF8 = "שמוליקיפוד";
+    // std::getline(std::cin, patternUTF8);
+    patternUTF8 = "שמוליקיפוד";
     // patternUTF8 = "יצחק רבין";
 
     auto result = search(utf8ToIso8859_8(patternUTF8));
@@ -22,5 +22,7 @@ int main() {
     else {
       std::cout << "could not find " << patternUTF8 << '\n';
     }
+
+    return 0;
   }
 }
