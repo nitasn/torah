@@ -9,17 +9,21 @@ Module.onRuntimeInitialized = async () => {
 
 onmessage = ({ data }) => {
   const { pattern } = data;
-  const result = searchPackedResult(pattern + '\0');
-
-  postMessage({ type: 'result', result });
+  const bits = searchPackedResult(pattern + '\0');
+  postMessage({ type: 'result', result: unpackResult(bits) });
 };
 
+function unpackResult(bits) {
+  if (bits === 0) return null;
 
-// worker.postMessage({ pattern: 'אברהם' });
+  const twenty_bits = (1 << 20) - 1;
 
-// isoHebrew_to_number failed: non iso-8859-8 hebrew letter
+  return {
+    index: (bits >> 1) & twenty_bits,
+    step: bits >> 21,
+  };
+}
 
-// TODO: find it! throw in c++; in catch print whole string char by char!
 
 // TODO: don't exit(3) actually thow exception (if that makes the wasm module persist)
 // unless core persists anyway, in that case, whatever

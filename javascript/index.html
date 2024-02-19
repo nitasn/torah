@@ -7,12 +7,11 @@
 </head>
 <body>
 
-<script src="iso-8859-8.js"></script>
 <script>
 
 const worker = new Worker('worker.js');
 
-worker.onmessage = function(e) {
+worker.onmessage = (e) => {
   if (e.data.type === 'ready') {
     console.log('Worker is ready');
   } 
@@ -22,7 +21,7 @@ worker.onmessage = function(e) {
 };
 
 // If needed, listen for errors from the worker
-worker.onerror = function(error) {
+worker.onerror = (error) => {
   console.error('Worker error:', error);
 };
 

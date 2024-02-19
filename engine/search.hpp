@@ -19,10 +19,15 @@ extern "C" {
 
 /** 
  * for wasm to export. 
- * result consists of 41 (least-significant) bits.
- * bit 0: whether has result (if it's 0 then the rest is invalid)
- * bits 1-20: index in string
- * bits 21-40: step (diloog) size
+ * 
+ * if there's a match:
+ *    the return value has 41 (least-significant) bits
+ *    bit 0       set to one
+ *    bits 1-20   index in string
+ *    bits 21-40  step (diloog) size
+ * 
+ * else:
+ *    he funcion returns 0
  */
 uint64_t search__packed_result(const char *pattern_utf8);
 
