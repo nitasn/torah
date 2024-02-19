@@ -9,6 +9,7 @@
 #include <stdbool.h> // for bool
 #include <unistd.h> // for ssize_t
 
+
 ///////////////////////////////////////////////////////////////
 ///               M O D U L E   P R I V A T E               ///
 ///////////////////////////////////////////////////////////////
@@ -63,7 +64,9 @@ static void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-static uint8_t *boyer_moore_els_impl(
+const size_t no_pos = ~(size_t)(0);
+
+static size_t boyer_moore_els_loop(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
     ptrdiff_t delta1[], ptrdiff_t delta2[],
@@ -79,14 +82,14 @@ static uint8_t *boyer_moore_els_impl(
         i -= step;
       }
       if (j < 0) {
-        return &string[i + step];
+        return i + step;
       }
 
       i += step * max(delta1[string[i]], delta2[j]);
     }
   }
 
-  return NULL;
+  return no_pos;
 }
 
 
@@ -121,18 +124,22 @@ static uint8_t *boyer_moore_els_impl(
  * TODO: return all results?
  */
 
-uint8_t *boyer_moore_els(
+std::optional<SearchResult> boyer_moore_els(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
-    size_t *ptr_step
+    size_t min_step, size_t max_step
 ) {
 
   if (len_pattern == 0) {
-    return string;
+    return {{ .index = 0, .step = 1 }};
   }
 
   if (len_pattern == 1) {
-    return (uint8_t *) memchr(string, *pattern, len_string);
+    size_t index = (ptrdiff_t) memchr(string, *pattern, len_string) - (ptrdiff_t) string;
+    if (~index) {
+      return {{ .index = index, .step = 1 }};
+    }
+    return std::nullopt;
   }
 
   ptrdiff_t delta1[ALPHABET_LEN];
@@ -141,22 +148,21 @@ uint8_t *boyer_moore_els(
   ptrdiff_t delta2[len_pattern];
   make_delta2(delta2, pattern, len_pattern);
 
-  if (*ptr_step) {
-    return boyer_moore_els_impl(string, len_string, pattern, len_pattern, delta1, delta2, *ptr_step);
-  }
+  const size_t max_possible_step = (len_string - 1) / (len_pattern - 1); // see comment below
 
-  const size_t max_step = (len_string - 1) / (len_pattern - 1); // see comment below
+  if (min_step == 0) min_step = 1;
+  if (max_step == 0 || max_step > max_possible_step) max_step = max_possible_step;
 
-  for (size_t step = 1; step <= max_step; ++step) {
-    uint8_t *match = boyer_moore_els_impl(string, len_string, pattern, len_pattern, delta1, delta2, step);
-    if (match) {
-      *ptr_step = step;
-      return match;
+  for (size_t step = min_step; step <= max_step; ++step) {
+    size_t index = boyer_moore_els_loop(string, len_string, pattern, len_pattern, delta1, delta2, step);
+    if (~index) {
+      return {{ index, step }};
     }
   }
 
-  return NULL;
+  return std::nullopt;
 }
+
 
 /*
 the largest possible step size

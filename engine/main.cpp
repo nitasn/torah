@@ -1,4 +1,4 @@
-#include "search.hpp"
+#include "search-torah.hpp"
 
 #include <iostream>
 
@@ -8,10 +8,10 @@ int main() {
 
     std::string patternUTF8;
     // std::getline(std::cin, patternUTF8);
-    // patternUTF8 = "שמוליקיפוד";
-    patternUTF8 = "יצחק רבין";
+    patternUTF8 = "שמוליקיפוד";
+    // patternUTF8 = "יצחק רבין";
 
-    auto result = search(patternUTF8);
+    auto result = search_torah(patternUTF8);
 
     if (result) {
       std::cout << "found " << patternUTF8 << '\n';

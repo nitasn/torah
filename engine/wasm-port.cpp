@@ -1,4 +1,4 @@
-#include "search.hpp"
+#include "search-torah.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -9,20 +9,21 @@ EMSCRIPTEN_KEEPALIVE
  * for wasm to export. 
  */
 extern "C" {
-  void c_style__search(const char *pattern_utf8, int32_t *index, int32_t *step);
+  int c_style__search(const char *pattern_utf8, uint32_t min_step, uint32_t max_step, uint32_t *index, uint32_t *step);
 }
 
 /// impl
 
-void c_style__search(const char *pattern_utf8, int32_t *index, int32_t *step) {
-  auto result = search(pattern_utf8);
+#include <iostream>
+
+int c_style__search(const char *pattern_utf8, uint32_t min_step, uint32_t max_step, uint32_t *index, uint32_t *step) {
+  auto result = search_torah(pattern_utf8, min_step, max_step);
+
+  if (!result) {
+    return 0;
+  }
   
-  if (result) {
-    *index = result->index;
-    *step = result->step;
-  }
-  else {
-    *index = -1;
-    *step = 0;
-  }
+  *index = result->index;
+  *step = result->step;
+  return 1;
 }
