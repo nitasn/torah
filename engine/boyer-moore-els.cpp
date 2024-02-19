@@ -90,7 +90,10 @@ uint8_t *boyer_moore_els_impl__faster(
   return NULL;
 }
 
-
+/** 
+ * NOTE: this might be actually faster than above method for certain step sizes.
+ * also, the traversing could probably be imporoved
+ */
 // this attempts to traverse the big string in a slitghly more monotonous manner
 uint8_t *boyer_moore_els_impl(
     uint8_t *string, size_t len_string, 
