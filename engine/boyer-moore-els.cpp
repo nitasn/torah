@@ -17,7 +17,7 @@
 
 #define ALPHABET_LEN 22
 
-void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
+static void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
   for (int i = 0; i < ALPHABET_LEN; i++) {
     delta1[i] = patlen;
   }
@@ -26,7 +26,7 @@ void make_delta1(ptrdiff_t *delta1, uint8_t *pat, size_t patlen) {
   }
 }
 
-bool is_prefix(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
+static bool is_prefix(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
   int suffixlen = wordlen - pos;
 
   for (int i = 0; i < suffixlen; i++) {
@@ -37,7 +37,7 @@ bool is_prefix(uint8_t *word, size_t wordlen, ptrdiff_t pos) {
   return true;
 }
 
-size_t suffix_length(uint8_t *word, size_t wordlen, size_t pos) {
+static size_t suffix_length(uint8_t *word, size_t wordlen, size_t pos) {
   size_t i;
 
   for (i = 0; (word[pos - i] == word[wordlen - 1 - i]) && (i <= pos); i++)
@@ -45,7 +45,7 @@ size_t suffix_length(uint8_t *word, size_t wordlen, size_t pos) {
   return i;
 }
 
-void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
+static void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   size_t last_prefix_index = 1;
 
   for (ssize_t p = patlen - 1; p >= 0; p--) {
@@ -63,7 +63,7 @@ void make_delta2(ptrdiff_t *delta2, uint8_t *pat, size_t patlen) {
   }
 }
 
-uint8_t *boyer_moore_els_impl(
+static uint8_t *boyer_moore_els_impl(
     uint8_t *string, size_t len_string, 
     uint8_t *pattern, size_t len_pattern, 
     ptrdiff_t delta1[], ptrdiff_t delta2[],
