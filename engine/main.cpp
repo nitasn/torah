@@ -1,5 +1,4 @@
 #include "search.hpp"
-#include "util-functions.hpp" // for "utf8ToIso8859_8"
 
 #include <iostream>
 
