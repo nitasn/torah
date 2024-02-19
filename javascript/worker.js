@@ -6,13 +6,13 @@ Module.onRuntimeInitialized = () => {
 };
 
 onmessage = ({ data }) => {
-  const { pattern, search_id, min_step, max_step } = data;
+  const { search_id, pattern, min_step, max_step } = data;
 
   // malloc 8 bytes for two int32 numbers
   const pIndex = Module._malloc(8);
   const pStep = pIndex + 4;
 
-  const did_find = c_style__search(pattern + '\0', min_step ?? 0, max_step ?? 0, pIndex, pStep);
+  const did_find = c_style__search(pattern + '\0', min_step, max_step, pIndex, pStep);
 
   const [index, step] = new Int32Array(Module.HEAP32.buffer, pIndex, 2);
   Module._free(pIndex);
@@ -25,5 +25,5 @@ onmessage = ({ data }) => {
 };
 
 
-// TODO: don't exit(3) actually thow exception (if that makes the wasm module persist)
-// unless core persists anyway, in that case, whatever
+// TODO: maybe don't exit(3); instead throw exception (if that makes the wasm module persist)
+// unless it persists anyway, in that case, whatever
