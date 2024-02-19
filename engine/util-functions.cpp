@@ -3,7 +3,7 @@
 
 std::vector<uint8_t> removeSpacesAndConvertToNumbers(const std::string &string_iso_8859_8) {
   std::vector<uint8_t> result;
-
+  
   static const auto is_not_space = [](char c) { return !isspace(c); };
 
   std::copy_if(string_iso_8859_8.begin(), string_iso_8859_8.end(), std::back_inserter(result), is_not_space);

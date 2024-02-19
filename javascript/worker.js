@@ -1,5 +1,5 @@
 importScripts('search.js');
-importScripts('iso-8859-8.js');
+// importScripts('iso-8859-8.js');
 
 let searchPackedResult;
 
@@ -10,7 +10,7 @@ Module.onRuntimeInitialized = async () => {
 
 onmessage = ({ data }) => {
   const { pattern } = data;
-  const result = searchPackedResult(iso88598.encode(pattern) + '\0');
+  const result = searchPackedResult(pattern + '\0');
   postMessage({ type: 'result', result });
 };
 

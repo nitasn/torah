@@ -8,7 +8,7 @@ struct SearchResult {
 };
 
 // for internal ergonomic use
-std::optional<SearchResult> search(const std::string& pattern_iso_8859_8);
+std::optional<SearchResult> search(const std::string& pattern_utf8);
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -24,6 +24,6 @@ extern "C" {
  * bits 1-20: index in string
  * bits 21-40: step (diloog) size
  */
-uint64_t search__packed_result(const char *pattern_iso_8859_8);
+uint64_t search__packed_result(const char *pattern_utf8);
 
 }

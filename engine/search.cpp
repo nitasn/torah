@@ -4,7 +4,8 @@
 #include "util-functions.hpp" // "removeSpacesAndConvertToNumbers"
 #include "torah_block.h"
 
-std::optional<SearchResult> search(const std::string& pattern_iso_8859_8) {
+std::optional<SearchResult> search(const std::string& pattern_utf8) {
+  std::string pattern_iso_8859_8 = utf8ToIso8859_8(pattern_utf8);
   std::vector<uint8_t> simplified_pat = removeSpacesAndConvertToNumbers(pattern_iso_8859_8);
 
   size_t step = 0;
@@ -32,8 +33,8 @@ std::optional<SearchResult> search(const std::string& pattern_iso_8859_8) {
  * bits 1-20: index in string
  * bits 21-40: step (diloog) size
  */
-uint64_t search__packed_result(const char *pattern_iso_8859_8) {
-  std::optional<SearchResult> result = search(std::string(pattern_iso_8859_8));
+uint64_t search__packed_result(const char *pattern_utf8) {
+  std::optional<SearchResult> result = search(pattern_utf8);
   if (!result) return 0;
   const uint64_t twenty_bits = (1 << 20) - 1;
   const uint64_t step = result->step & twenty_bits;

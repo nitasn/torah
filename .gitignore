@@ -2,3 +2,8 @@
 .vscode/
 build/
 notes.txt
+
+# compiled wasm
+javascript/search.wasm
+# compiled js adapter
+javascript/search.js
