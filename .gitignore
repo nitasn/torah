@@ -2,3 +2,6 @@
 .vscode/
 build/
 notes.txt
+
+javascript/search.wasm
+javascript/search.js
