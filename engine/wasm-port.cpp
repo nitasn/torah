@@ -17,7 +17,7 @@ extern "C" {
 #include <iostream>
 
 int c_style__search(const char *pattern_utf8, uint32_t min_step, uint32_t max_step, uint32_t *index, uint32_t *step) {
-  auto result = search_torah(pattern_utf8, min_step, max_step);
+  auto result = search_torah_parallel(pattern_utf8, min_step, max_step, 4);
 
   if (!result) {
     return 0;

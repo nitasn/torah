@@ -11,7 +11,7 @@ int main() {
     patternUTF8 = "שמוליקיפוד";
     // patternUTF8 = "יצחק רבין";
 
-    auto result = search_torah(patternUTF8);
+    auto result = search_torah_parallel(patternUTF8, 0, 0, 10);
 
     if (result) {
       std::cout << "found " << patternUTF8 << '\n';

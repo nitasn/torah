@@ -149,7 +149,7 @@ std::optional<SearchResult> boyer_moore_els(
   make_delta2(delta2, pattern, len_pattern);
 
   const size_t max_possible_step = (len_string - 1) / (len_pattern - 1); // see comment below
-
+  /** TODO: currently this logic is duplicated. but also, table generation is repeated for each thread! */
   if (min_step == 0) min_step = 1;
   if (max_step == 0 || max_step > max_possible_step) max_step = max_possible_step;
 
