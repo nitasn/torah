@@ -1,28 +1,28 @@
 importScripts('engine.js');
 
-let searchPackedResult;
-
-Module.onRuntimeInitialized = async () => {
+Module.onRuntimeInitialized = () => {
+  self.c_style__search = Module.cwrap('c_style__search', null, ['string', 'number', 'number']);
   postMessage({ type: 'ready' });
-  searchPackedResult = Module.cwrap('search__packed_result', 'number', ['string']);
 };
 
 onmessage = ({ data }) => {
-  const { pattern } = data;
-  const bits = searchPackedResult(pattern + '\0');
-  postMessage({ type: 'result', result: unpackResult(bits) });
+  const { pattern, search_id } = data;
+
+  // malloc 8 bytes for two int32 numbers
+  const pIndex = Module._malloc(8);
+  const pStep = pIndex + 4;
+
+  c_style__search(pattern + '\0', pIndex, pStep);
+
+  const [index, step] = new Int32Array(Module.HEAP32.buffer, pIndex, 2);
+  Module._free(pIndex);
+
+  postMessage({
+    type: 'done',
+    result: ~index ? { index, step } : null,
+    search_id,
+  });
 };
-
-function unpackResult(bits) {
-  if (bits === 0) return null;
-
-  const twenty_bits = (1 << 20) - 1;
-
-  return {
-    index: (bits >> 1) & twenty_bits,
-    step: bits >> 21,
-  };
-}
 
 
 // TODO: don't exit(3) actually thow exception (if that makes the wasm module persist)

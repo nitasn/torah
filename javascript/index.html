@@ -6,25 +6,6 @@
   <title>Document</title>
 </head>
 <body>
-
-<script>
-
-const worker = new Worker('worker.js');
-
-worker.onmessage = (e) => {
-  if (e.data.type === 'ready') {
-    console.log('Worker is ready');
-  } 
-  else if (e.data.type === 'result') {
-    console.log('Result from WASM:', e.data.result);
-  }
-};
-
-// If needed, listen for errors from the worker
-worker.onerror = (error) => {
-  console.error('Worker error:', error);
-};
-
-</script>
+  <script src="search.js"></script>
 </body>
 </html>

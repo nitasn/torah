@@ -73,4 +73,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 #################################################################
 
 wasm:
-	em++ -O3 engine/*.cpp -o javascript/engine.js -s EXPORTED_FUNCTIONS='["_search__packed_result"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
+	em++ -O3 engine/*.cpp -o javascript/engine.js -s EXPORTED_FUNCTIONS='["_c_style__search","_malloc","_free"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
