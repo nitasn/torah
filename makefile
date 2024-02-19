@@ -66,3 +66,11 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo "compiling $<"
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@mv $(OBJ_DIR)/$*.d $(DEP_DIR)/$*.d
+
+
+#################################################################
+###                   W A S M   T A R G E T                   ###
+#################################################################
+
+wasm:
+	em++ -O3 engine/*.cpp -o javascript/search.js -s EXPORTED_FUNCTIONS='["_search__packed_result"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
