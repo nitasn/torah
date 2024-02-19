@@ -3,5 +3,5 @@
 build/
 notes.txt
 
-javascript/search.wasm
-javascript/search.js
+javascript/engine.wasm
+javascript/engine.js
