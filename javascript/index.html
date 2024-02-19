@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+<script src="iso-8859-8.js"></script>
+<script>
+
+const worker = new Worker('worker.js');
+
+worker.onmessage = function(e) {
+  if (e.data.type === 'ready') {
+    console.log('Worker is ready');
+  } 
+  else if (e.data.type === 'result') {
+    console.log('Result from WASM:', e.data.result);
+  }
+};
+
+// If needed, listen for errors from the worker
+worker.onerror = function(error) {
+  console.error('Worker error:', error);
+};
+
+</script>
+</body>
+</html>

@@ -15,3 +15,6 @@ make > /dev/null && echo "יצחק רבין" | iconv -f UTF-8 -t ISO-8859-8 | bu
 # found
 # at index 254245
 # at step 4772
+
+
+em++ -O3 engine/*.cpp -o javascript/search.js -s EXPORTED_FUNCTIONS='["_search__packed_result"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
