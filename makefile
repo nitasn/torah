@@ -9,8 +9,10 @@ EXECUTABLE := $(OUT_DIR)/main
 __generate_depenencies :=  -MMD -MP -I./$(SRC_DIR)
 
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -O3 $(__generate_depenencies)
-# CXXFLAGS := -std=c++20 -Wall -g -O0 $(__generate_depenencies)
+
+CXXFLAGS := -std=c++20 -Wall -Wextra $(__generate_depenencies) -O3
+# CXXFLAGS := -std=c++20 -Wall -Wextra $(__generate_depenencies) -g -O0
+
 LINKER_FLAGS := 
 
 
@@ -72,5 +74,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 ###                   W A S M   T A R G E T                   ###
 #################################################################
 
+wasm_export := EXPORTED_FUNCTIONS='["_c_style__search","_malloc","_free"]'
+
 wasm:
-	em++ -O3 engine/*.cpp -o javascript/engine.js -s EXPORTED_FUNCTIONS='["_c_style__search","_malloc","_free"]' -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
+	em++ -O3 engine/*.cpp -o javascript/engine.js -s $(wasm_export) -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
