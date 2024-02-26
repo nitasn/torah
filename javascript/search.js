@@ -1,4 +1,4 @@
-(() => {
+/* module start */ (() => {
 
 let engineLoaded = false;
 
@@ -49,4 +49,4 @@ globalThis.search = search;
 
 globalThis.hasEngineLoaded = () => engineLoaded;
 
-})();
+/* module end */ })();
