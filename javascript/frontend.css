@@ -1,0 +1,46 @@
+h1 {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.container {
+  max-width: min(calc(100vw - 2rem), 700px);
+}
+
+.step-limits {
+  display: flex; 
+  gap: 2rem;
+}
+
+.step-limits label {
+  flex: 1;
+}
+
+#search-indicator {
+  width: 100%;
+}
+
+.result {
+  margin-top: 1rem;
+}
+
+.info {
+  margin-top: -0.75rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: rgb(138, 145, 162);
+  /* font-style: oblique; */
+}
+
+p.text {
+  margin-block: 0;
+  font-weight: bold;
+}
+
+.green {
+  color: var(--pico-ins-color, #62af9a);
+}
+
+.red {
+  color: var(--pico-del-color, #ce7e7b);
+}
