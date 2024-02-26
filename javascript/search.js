@@ -1,15 +1,17 @@
-const NUM_WORKERS = 2;
-
 /**
- * We have `NUM_WORKERS` workers, which are threads running the engine.
+ * We have `NUM_WORKERS` threads running the engine.
  * 
  * Upon query, we split the work between them.
  * We resolve the search as soon as any of them finds a solution,
  * Or after all of them returned empty-handed.
  * 
  * The `search` function we export takes a pattern and an optional { min_step, max_step } object;
- * It returns a promise that eventually resolves to either { index, step } object, or null.
+ * It returns a promise that eventually resolves to either an { index, step } object, or to null.
  */
+
+
+// half the CPU cores, or 2 if cores info is unavailable
+const NUM_WORKERS = Math.round(navigator.hardwareConcurrency * 0.5) || 2;
 
 
 (() => { // module iife
