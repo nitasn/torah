@@ -1,30 +1,30 @@
 const NUM_WORKERS = 2;
 
-// /* module start */ (() => {
+/**
+ * We have `NUM_WORKERS` workers, which are threads running the engine.
+ * 
+ * Upon query, we split the work between them.
+ * We resolve the search as soon as any of them finds a solution,
+ * Or after all of them returned empty-handed.
+ * 
+ * The `search` function we export takes a pattern and an optional { min_step, max_step } object;
+ * It returns a promise that eventually resolves to either { index, step } object, or null.
+ */
 
-let numWorkersLoaded = 0;
 
-const newWorker = () => new Worker('worker.js');
-const workers = Array.from({ length: NUM_WORKERS }, newWorker);
+(() => { // module iife
 
-workers.forEach((worker) => {
-  worker.onmessage = ({ data }) => {
-    if (data.type === 'ready') {
-      if (++numWorkersLoaded == NUM_WORKERS) {
-        console.log('Engine is Ready');
-      }
-    }
-    else if (data.type === 'done') {
-      onEngineSearchDone(data);
-    }
-  };
-  worker.onerror = () => {
-    // todo some ui msg
-  };
-});
+///////////////////////////////////////////////////////////////
+///            M A N A G I N G   S E A R C H E S            ///
+///////////////////////////////////////////////////////////////
+
+const newID = (() => {
+  let id = 0;
+  return () => id++;
+})();
 
 /**
- * Get ranges of steps to search (ranges.length <= NUM_WORKERS)
+ * divide a search into ranges of steps to check (ranges.length <= NUM_WORKERS)
  * @returns {{ min_step: number, max_step: number }[]}
  */
 function splitRangeOfStepsBetweenWorkers(min_step, max_step, pattern_len) {
@@ -36,7 +36,7 @@ function splitRangeOfStepsBetweenWorkers(min_step, max_step, pattern_len) {
   if (!min_step) min_step = 1;
 
   if (min_step > max_step) {
-    // there's no valid step to check
+    // there are no steps to check
     return [];
   }
 
@@ -62,18 +62,11 @@ function splitRangeOfStepsBetweenWorkers(min_step, max_step, pattern_len) {
   return ranges;
 }
 
+/**
+ * key: search_id
+ * value: { numWorkersInvolved, numWorkersDone, resolveSearch }
+ */
 const searchesRegistery = new Map();
-
-function onEngineSearchDone({ result, search_id }) {
-  const searchRegistery = searchesRegistery.get(search_id);
-  searchesRegistery.result ??= result;
-  if (++searchRegistery.numWorkersDone == searchRegistery.numWorkersInvolved) {
-    searchesRegistery.delete(search_id);
-    searchRegistery.resolveSearch(searchesRegistery.result);
-  }
-}
-
-let search_id = 0;
 
 /**
  * Equidistant Letter Sequence ("דילוגי אותיות") Search in the Torah, in Hebrew.
@@ -84,39 +77,76 @@ let search_id = 0;
  */
 function search(pattern, { min_step = null, max_step = null } = {}) {
   if (!isEngineReady()) {
-    throw new Error(
-      `engine isn't ready yet (num workers loaded: ${numWorkersLoaded} / ${NUM_WORKERS})`
-    );
+    throw new Error(`engine isn't ready yet (num workers loaded: ${numWorkersLoaded} / ${NUM_WORKERS})`);
   }
 
-  const rangesOfSteps = splitRangeOfStepsBetweenWorkers(+min_step, +max_step, pattern.length);
+  // split the range [min_step, max_step] into up to NUM_WORKERS sub ranges
+  const subRanges = splitRangeOfStepsBetweenWorkers(+min_step, +max_step, pattern.length);
 
-  if (rangesOfSteps.length == 0) {
-    /** TODO */
-    return console.warn("no steps to check");
+  if (subRanges.length === 0) {
+    console.warn("no steps to check");
+    return Promise.resolve(null);
   }
+
+  const search_id = newID();
 
   const searchPromise = new Promise((resolveSearch) => {
     searchesRegistery.set(search_id, {
-      numWorkersInvolved: rangesOfSteps.length,
+      numWorkersInvolved: subRanges.length,
       numWorkersDone: 0,
-      result: null,
       resolveSearch,
     });
   });
 
-  for (let i = 0; i < rangesOfSteps.length; ++i) {
-    const { min_step, max_step } = rangesOfSteps[i];
+  for (let i = 0; i < subRanges.length; ++i) {
+    const { min_step, max_step } = subRanges[i];
     workers[i].postMessage({ search_id, pattern, min_step, max_step });
   }
 
-  search_id++; // for next search
   return searchPromise;
 };
 
-// module export
+function onEngineSearchDone({ result, search_id }) {
+  const searchInstance = searchesRegistery.get(search_id);
+  if (result) {
+    // if already resolved, this is a noop
+    searchInstance.resolveSearch(result);
+  }
+  if (++searchInstance.numWorkersDone == searchInstance.numWorkersInvolved) {
+    searchesRegistery.delete(search_id);
+    // if already resolved, this is a noop
+    searchInstance.resolveSearch(null);
+  }
+}
+
+///////////////////////////////////////////////////////////////
+///      M A N A G I N G   W O R K E R   T H R E A D S      ///
+///////////////////////////////////////////////////////////////
+
+const newWorker = () => new Worker('worker.js');
+const workers = Array.from({ length: NUM_WORKERS }, newWorker);
+let numWorkersLoaded = 0;
+
+workers.forEach((worker) => {
+  worker.onmessage = ({ data }) => {
+    if (data.type === 'ready' && ++numWorkersLoaded == NUM_WORKERS) {
+      console.log('Engine is Ready');
+    }
+    if (data.type === 'done') {
+      onEngineSearchDone(data);
+    }
+  };
+  worker.onerror = () => {
+    // todo some ui msg
+  };
+});
+
+///////////////////////////////////////////////////////////////
+///               M O D U L E   E X P O R T S               ///
+///////////////////////////////////////////////////////////////
+
 globalThis.search = search;
 
 globalThis.isEngineReady = () => (numWorkersLoaded == NUM_WORKERS);
 
-// /* module end */ })();
+})(); // module iife
