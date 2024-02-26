@@ -18,6 +18,9 @@ static void _panic(size_t i, unsigned char c) {
   exit(2); // todo have a way to return error as value
 }
 
+// TODO: maybe don't exit(3); instead throw exception (if that makes the wasm module persist)
+// unless the wasm module persists anyway, in that case, whatever
+
 static std::string utf8_to_iso_8859_8(const std::string &utf8) {
   std::string result;
   result.reserve(utf8.length());
