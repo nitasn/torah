@@ -138,9 +138,7 @@ workers.forEach((worker) => {
       onEngineSearchDone(data);
     }
   };
-  worker.onerror = () => {
-    // todo some ui msg
-  };
+  // worker.onerror = { /* todo some ui indication? */ };
 });
 
 ///////////////////////////////////////////////////////////////
