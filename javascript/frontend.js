@@ -36,6 +36,10 @@ form.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (workingOnIt || inputLength() === 0) return;
 
+  if (!globalThis.isEngineReady?.()) {
+    return openModal();
+  }
+
   searchBtn.style.display = 'none';
   searchIndicator.style.display = 'unset';
   workingOnIt = true;

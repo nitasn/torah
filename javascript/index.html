@@ -60,8 +60,29 @@
 
   </main>
 
+  <dialog id="oopsie-modal" class="modal">
+    <article>
+      <p>
+        היי! עושה רושם שהמנוע טרם נטען.
+        אנא חכו כמה שניות ונסו שוב.
+        <br/>
+        אם הבעיה ממשיכה, בבקשה פנו אלינו ונפתור אותה ❤️
+        <br/>
+        <i style="color: #8c93a3; display: block; margin-block: 1rem;">
+          נ״ב ניתן להציץ בקונסולה של הדפדפן בשביל לראות יותר פרטים:
+          <br/>
+          נסו <strong>Ctrl + Shift + J</strong>
+          (על מק זה <strong>Cmd + Opt + J</strong>)
+        </i>
+      </p>
+      <button class="secondary" autofocus onclick="closeModal()">
+        סגור
+      </button>
+    </article>
+  </dialog>
 
   <script src="search.js"></script>
   <script src="frontend.js"></script>
+  <script src="pico-modal.js"></script>
 </body>
 </html>
