@@ -77,4 +77,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 wasm_export := EXPORTED_FUNCTIONS='["_c_style__search","_malloc","_free"]'
 
 wasm:
-	em++ -O3 engine/*.cpp -o javascript/engine.js -s $(wasm_export) -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1
+	em++ -O3 engine/*.cpp -o frontend/engine.js -s $(wasm_export) -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -s WASM=1

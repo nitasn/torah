@@ -24,7 +24,7 @@ make wasm
 ```
 3. Serve it locally over HTTP (e.g. using Python's http.server):
 ```bash
-cd javascript
+cd frontend
 python3 -m http.server
 ```
 4. Open your browser at [http://localhost:8000/](http://localhost:8000/).
