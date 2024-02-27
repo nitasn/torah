@@ -22,9 +22,8 @@ git clone https://github.com/nitasn/torah
 cd torah
 make wasm
 ```
-3. Serve it locally over HTTP (e.g. using Python's http.server):
+3. Serve the `frontend` directory over HTTP:
 ```bash
-cd frontend
-python3 -m http.server
+python3 -m http.server --directory frontend
 ```
 4. Open your browser at [http://localhost:8000/](http://localhost:8000/).
