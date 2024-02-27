@@ -7,9 +7,8 @@ int main() {
     std::cout << "search: ";
 
     std::string patternUTF8;
-    // std::getline(std::cin, patternUTF8);
-    patternUTF8 = "שמוליקיפוד";
-    // patternUTF8 = "יצחק רבין";
+    std::getline(std::cin, patternUTF8);
+    if (patternUTF8 == "quit") break;
 
     auto result = search_torah(patternUTF8);
 
@@ -21,7 +20,5 @@ int main() {
     else {
       std::cout << "could not find " << patternUTF8 << '\n';
     }
-
-    return 0;
   }
 }
