@@ -1,4 +1,4 @@
-# Fast Client-Side "Bible Code" Search in Hebrew
+# Fast In-Browser "Bible Code" Search in Hebrew
 Fast Equidistant-Letter-Sequence ("דילוגי אותיות") Search in the Torah.
 
 [Try it here!](https://nitasn.github.io/bible-code-searcher/)
